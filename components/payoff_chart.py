@@ -97,7 +97,7 @@ def build_payoff_figure(
                 x=prices[loss_mask],
                 y=pnl[loss_mask],
                 mode="lines",
-                line=dict(color="transparent"),
+                line=dict(color="rgba(0,0,0,0)"),
                 fill="tozeroy",
                 fillcolor="rgba(220, 53, 69, 0.15)",
                 showlegend=False,
