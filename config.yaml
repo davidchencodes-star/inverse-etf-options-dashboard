@@ -1,0 +1,63 @@
+# ============================================================
+# Inverse ETF Options Dashboard - Configuration
+# All thresholds are configurable here without code changes.
+# ============================================================
+
+# --- Data Provider ---
+# "yfinance" (default, no API key) or "tradier" (needs TRADIER_API_TOKEN env var)
+data_provider: yfinance
+risk_free_rate: 0.05  # for Black-Scholes Greeks calculation
+
+# --- Instruments ---
+etfs:
+  - SPXS
+  - SQQQ
+  - SH
+  - SDS
+
+index_proxies:
+  sp500: SPY
+  nasdaq: QQQ
+
+vix_symbol: "^VIX"
+
+# --- VIX Regime Thresholds ---
+vix_regime:
+  green: [18, 28]       # Optimal for premium selling
+  yellow_low: 18        # Below this = thin premiums
+  yellow_high: 35       # Above green but below red = elevated risk
+  red: 35               # >= this = extreme stress
+
+# --- Annualized Return Target (%) ---
+annualized_return_target: 30
+
+# --- Delta Bands ---
+delta_bands:
+  short_calls: [0.10, 0.50]
+  short_calls_focus: [0.20, 0.30]
+  short_puts: [-0.50, -0.10]
+  short_puts_focus: [-0.30, -0.20]
+
+# --- Liquidity Thresholds ---
+liquidity:
+  min_oi: 200           # Minimum open interest for "green"
+  min_volume: 20        # Minimum daily volume for "green"
+  marginal_oi: 50       # Below this = "red" (very low liquidity)
+
+# --- RSI Thresholds ---
+rsi_thresholds:
+  overbought: 70
+  oversold: 30
+  neutral_low: 40
+  neutral_high: 60
+
+# --- Expiration Targets (DTE) ---
+expirations_dte:
+  - 7
+  - 14
+
+# --- Refresh Settings ---
+refresh_interval_minutes: 5
+
+# --- Historical Data ---
+historical_days: 150    # Days of history to fetch (buffer for 100-day SMA)
