@@ -68,7 +68,7 @@ def update_vix_card(
     return (
         f"{vix_level:.1f}",
         change_text,
-        f"{color.capitalize()} \u2013 {label}",
+        f"{label}",
         badge_variant,
         f"h-100 shadow-sm {border_class}",
     )

@@ -24,11 +24,11 @@ def vix_traffic_light(vix_level: float, config: dict) -> dict[str, str]:
     Determine VIX regime color.
 
     Args:
-        vix_level: Current VIX value.
-        config: Full config dict.
+        vix_level (float): Current VIX value.
+        config (dict): Full config dict.
 
     Returns:
-        {"color": "green"|"yellow"|"red", "label": str}
+        dict: {"color": "green"|"yellow"|"red", "label": str}
     """
     vix_cfg = config.get("vix_regime", {})
     green_range = vix_cfg.get("green", [18, 28])
@@ -42,19 +42,19 @@ def vix_traffic_light(vix_level: float, config: dict) -> dict[str, str]:
     elif vix_level >= red_threshold:
         return {
             "color": "red",
-            "label": "Extreme stress \u2013 consider reducing size or pausing",
+            "label": "Extreme stress - consider reducing size or pausing",
         }
     else:
         # Yellow: <18 or 28-35
         if vix_level < green_range[0]:
             return {
                 "color": "yellow",
-                "label": "Low volatility \u2013 thin premiums",
+                "label": "Low volatility - thin premiums",
             }
         else:
             return {
                 "color": "yellow",
-                "label": "Elevated risk \u2013 proceed with caution",
+                "label": "Elevated risk - proceed with caution",
             }
 
 
