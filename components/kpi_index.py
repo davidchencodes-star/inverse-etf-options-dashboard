@@ -82,7 +82,6 @@ def update_index_card(
     rsi_label = technicals.get("rsi_label", "N/A")
 
     color = traffic_light.get("color", "yellow")
-    label = traffic_light.get("label", "")
 
     # SMA checkmarks
     def sma_indicator(above: bool) -> str:

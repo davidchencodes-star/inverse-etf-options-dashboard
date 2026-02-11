@@ -79,13 +79,10 @@ def index_traffic_light(
         config: Full config dict.
 
     Returns:
-        {"color": "green"|"yellow"|"red", "label": str}
+        {"color": "green"|"yellow"|"red"}
     """
-    rsi_cfg = config.get("rsi_thresholds", {})
-    overbought = rsi_cfg.get("overbought", 70)
-    oversold = rsi_cfg.get("oversold", 30)
-    neutral_low = rsi_cfg.get("neutral_low", 40)
-    neutral_high = rsi_cfg.get("neutral_high", 60)
+    neutral_low = config.get("rsi_thresholds", {}).get("neutral_low", 40)
+    neutral_high = config.get("rsi_thresholds", {}).get("neutral_high", 60)
 
     above_sma20 = technicals.get("above_sma20", False)
     above_sma50 = technicals.get("above_sma50", False)
@@ -96,54 +93,30 @@ def index_traffic_light(
 
     if strategy == "short_calls":
         # ----- Short Calls (bearish/neutral bias) -----
-        # Green: Downtrend or weakening + RSI >= 60 (overbought, rally exhausted)
         downtrend_or_weakening = (
             (not above_sma20 and not above_sma50)
             or (sma20 < sma50 and sma20 > 0 and sma50 > 0)
         )
         if downtrend_or_weakening and rsi >= neutral_high:
-            return {
-                "color": "green",
-                "label": "Favorable for Short Calls \u2013 weakening trend + overbought",
-            }
+            return {"color": "green"}
 
-        # Red: Strong uptrend + RSI < 60 (trend still building)
         strong_uptrend = above_sma20 and above_sma50 and above_sma100
         if strong_uptrend and rsi < neutral_high:
-            return {
-                "color": "red",
-                "label": "Avoid Short Calls \u2013 strong uptrend still building",
-            }
+            return {"color": "red"}
 
-        # Yellow: everything else (mixed trend and/or RSI 40-60)
-        return {
-            "color": "yellow",
-            "label": "Mixed signals for Short Calls \u2013 proceed with caution",
-        }
+        return {"color": "yellow"}
 
     else:
         # ----- Cash-Secured Puts (bullish/neutral bias) -----
-        # Green: Uptrend + RSI <= 40 (pullback within uptrend)
         strong_uptrend = above_sma20 and above_sma50 and above_sma100
         if strong_uptrend and rsi <= neutral_low:
-            return {
-                "color": "green",
-                "label": "Favorable for CSP \u2013 uptrend with pullback",
-            }
+            return {"color": "green"}
 
-        # Red: Strong downtrend + RSI < 40 (falling knife)
         strong_downtrend = not above_sma50 and not above_sma100
         if strong_downtrend and rsi < neutral_low:
-            return {
-                "color": "red",
-                "label": "Avoid CSP \u2013 falling knife risk",
-            }
+            return {"color": "red"}
 
-        # Yellow: mixed trend or RSI 40-60
-        return {
-            "color": "yellow",
-            "label": "Mixed signals for CSP \u2013 proceed with caution",
-        }
+        return {"color": "yellow"}
 
 
 # =========================================================================
