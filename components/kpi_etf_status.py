@@ -12,7 +12,7 @@ def create_etf_status_card() -> html.Div:
     """Create Inverse ETF Status KPI card."""
     return html.Div(
         [
-            html.Div("", id="etf-status-accent", className="kpi-accent accent-slate"),
+            html.Div(id="etf-status-accent", className="kpi-accent accent-slate"),
             html.Div(
                 [
                     html.P(
@@ -31,7 +31,8 @@ def create_etf_status_card() -> html.Div:
             html.Div(
                 [
                     html.Ul(id="etf-status-list", className="status-list"),
-                    html.P(id="etf-status-summary", className="status-summary"),
+                    html.P("Total Green Candidates: ", className="mt-4 mb-2 fw-semibold"),
+                    html.P(id="etf-status-summary", className="mt-0 text-end"),
                 ],
                 className="kpi-body",
             ),
@@ -89,6 +90,6 @@ def build_etf_status_rows(etf_statuses: list[dict]) -> tuple:
         rows.append(row)
         summary_parts.append(f"{symbol} {total_green}")
 
-    summary_text = "Total green candidates: " + " | ".join(summary_parts)
+    summary_text = " | ".join(summary_parts)
 
     return rows, summary_text

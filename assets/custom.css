@@ -243,10 +243,6 @@
     align-items: center;
 }
 
-.status-item:last-child {
-    border-bottom: 0;
-}
-
 .dot {
     width: 10px;
     height: 10px;

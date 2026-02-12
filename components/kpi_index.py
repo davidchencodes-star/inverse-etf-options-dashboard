@@ -18,7 +18,7 @@ def create_index_card(index_id: str, title: str) -> html.Div:
     """
     return html.Div(
         [
-            html.Div("", id=f"{index_id}-accent", className="kpi-accent accent-slate"),
+            html.Div(id=f"{index_id}-accent", className="kpi-accent accent-slate"),
             html.Div(
                 [
                     html.P(

@@ -12,7 +12,7 @@ def create_vix_card() -> html.Div:
     """Create VIX Regime KPI card with default slate styling."""
     return html.Div(
         [
-            html.Div("", id="vix-accent", className="kpi-accent accent-slate"),
+            html.Div(id="vix-accent", className="kpi-accent accent-slate"),
             html.Div(
                 [
                     html.P(
