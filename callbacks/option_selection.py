@@ -35,11 +35,11 @@ def register_option_selection_callbacks(app):
     def on_option_selected(selected_rows, table_data, strategy):
         """Handle row selection in the option chain table."""
         if not selected_rows or not table_data:
-            return no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update
+            return no_update, no_update, no_update, no_update, no_update
 
         row_idx = selected_rows[0]
         if row_idx >= len(table_data):
-            return no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update
+            return no_update, no_update, no_update, no_update, no_update
 
         row = table_data[row_idx]
         config = get_config()
