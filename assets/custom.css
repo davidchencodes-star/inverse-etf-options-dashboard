@@ -215,6 +215,39 @@
     background: var(--eft-slate);
 }
 
+.etf-text-green {
+    color: var(--etf-green);
+}
+
+.etf-text-yellow {
+    color: var(--eft-yellow);
+}
+
+.etf-text-red {
+    color: var(--eft-red);
+}
+
+.etf-text-slate {
+    color: var(--eft-slate);
+}
+
+/* Selected Option card: strategy label (Short Call / Cash-Secured Put) */
+.selected-option-strategy-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    background: #E2E8F0;
+    margin-right: 6px;
+}
+
+.selected-option-detail-rest {
+    font-size: 13px;
+    color: #334155;
+}
+
 .kpi-metric-row {
     display: flex;
     flex-wrap: wrap;

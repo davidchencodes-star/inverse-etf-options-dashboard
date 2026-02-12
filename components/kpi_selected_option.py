@@ -36,12 +36,10 @@ def create_selected_option_card() -> html.Div:
                         className="",
                     ),
                     html.P(
-                        "",
                         id="selected-option-detail",
                         className="",
                     ),
                     html.P(
-                        "",
                         id="selected-option-liquidity",
                         className="",
                     ),
@@ -68,12 +66,13 @@ def update_selected_option_card(
         strategy_label: Strategy name ('Short Call' or 'Cash-Secured Put').
 
     Returns:
-        Tuple of 4 strings for updating card components:
-        (value_text, detail_text, liquidity_text, accent_class)
+        Tuple of 4 items for updating card components:
+        (value_children, detail_children, liquidity_text, accent_class)
+        value_children and detail_children may be Dash components (e.g. list of html.Span).
     """
 
     color = performance_color.get("color", "slate")
-    if (color not in ["green", "yellow", "red", "slate"]):
+    if color not in ["green", "yellow", "red", "slate"]:
         color = "slate"
 
     ann_return = option_data.get("ann_return", 0)
@@ -87,7 +86,14 @@ def update_selected_option_card(
     # Format IV as percentage
     iv_pct = iv * 100 if iv and iv < 1 else (iv if iv else 0)
 
-    value_text = f"Ann. Return: {ann_return:.1f}% ({color.capitalize()})"
+    # Folded "Ann. return:" label + colored percentage (no "(Green)" text)
+    value_children = [
+        html.Span("Ann. return: ", className="font-semibold mr-1"),
+        html.Span(
+            f"{ann_return:.1f}%",
+            className=f"font-semibold etf-text-{color}",
+        ),
+    ]
 
     # Format delta display
     if delta is not None and delta != "N/A":
@@ -95,15 +101,17 @@ def update_selected_option_card(
     else:
         delta_str = "\u0394 N/A"
 
-    detail_text = (
-        f"{strategy_label} | {symbol} | "
-        f"{dte} DTE | {delta_str} | IV {iv_pct:.0f}%"
-    )
+    # Strategy as label badge (neutral), then symbol | DTE | Δ | IV
+    detail_children = [
+        html.Span(strategy_label, className="selected-option-strategy-badge"),
+        html.Span(f" {symbol} | {dte} DTE | {delta_str} | IV {iv_pct:.0f}%", className="selected-option-detail-rest"),
+    ]
+
     liquidity_text = f"OI {oi:,} | Vol {volume:,}"
 
     return (
-        value_text,
-        detail_text,
+        value_children,
+        detail_children,
         liquidity_text,
         f"kpi-accent accent-{color}",
     )
