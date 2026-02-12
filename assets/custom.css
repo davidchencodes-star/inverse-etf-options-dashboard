@@ -255,15 +255,15 @@
     flex: 0 0 auto;
 }
 
-.dot.green {
+.dot-green {
     background: var(--etf-green);
 }
 
-.dot.yellow {
+.dot-yellow {
     background: var(--eft-yellow);
 }
 
-.dot.red {
+.dot-red {
     background: var(--eft-red);
 }
 
