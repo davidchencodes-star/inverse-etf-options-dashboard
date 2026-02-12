@@ -33,7 +33,7 @@ def create_selected_option_card() -> html.Div:
                     html.P(
                         "Click a row in the chain",
                         id="selected-option-value",
-                        className="",
+                        style={"font-weight": "600 !important"},
                     ),
                     html.P(
                         id="selected-option-detail",
@@ -88,10 +88,10 @@ def update_selected_option_card(
 
     # Folded "Ann. return:" label + colored percentage (no "(Green)" text)
     value_children = [
-        html.Span("Ann. return: ", className="font-semibold mr-1"),
+        html.Span("Ann. return: ", className="mr-1"),
         html.Span(
             f"{ann_return:.1f}%",
-            className=f"font-semibold etf-text-{color}",
+            className=f"etf-text-{color}",
         ),
     ]
 
