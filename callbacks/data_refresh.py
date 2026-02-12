@@ -63,7 +63,7 @@ def register_data_refresh_callbacks(app):
         Output("nasdaq-icon", "className"),
         Output("nasdaq-badge", "className"),
         # ETF status card outputs
-        Output("etf-status-rows", "children"),
+        Output("etf-status-list", "children"),
         Output("etf-status-summary", "children"),
         # Option chain table outputs
         Output("option-chain-table", "data"),
@@ -173,7 +173,7 @@ def register_data_refresh_callbacks(app):
             strategy,
             config,
         )
-        etf_rows, etf_summary = build_etf_status_rows(etf_statuses)
+        etf_list, etf_summary = build_etf_status_rows(etf_statuses)
 
         # ---- Option Chain Table ----
         # Get the enriched chain for the selected ETF and DTE
@@ -239,7 +239,7 @@ def register_data_refresh_callbacks(app):
             # Nasdaq card (6 outputs)
             *ndx_out,
             # ETF status (2 outputs)
-            etf_rows,
+            etf_list,
             etf_summary,
             # Chain table (3 outputs)
             table_data,

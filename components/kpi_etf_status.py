@@ -1,69 +1,62 @@
 """
-KPI Card 4: Inverse ETF Status -- 4-Level Card.
+KPI Card 4: Inverse ETF Status (4-Level Card)
 
-Shows which of SPXS, SQQQ, SH, SDS currently have attractive short options.
-Each ETF gets a mini-row with ticker, price, green candidate count, and
-a colored indicator dot.
+Shows whether SPXS, SQQQ, SH, and SDS currently have attractive short-option candidates.
+Each ETF is displayed as a mini-row with ticker, last price, candidate count, and a color-coded status dot.
 """
 
-import dash_bootstrap_components as dbc
 from dash import html
 
-_DOT_STYLE = {
-    "green": {"backgroundColor": "#28a745"},
-    "yellow": {"backgroundColor": "#ffc107"},
-    "red": {"backgroundColor": "#dc3545"},
+_DOT_COLOR_MAP = {
+    "green": "dot-green",
+    "yellow": "dot-yellow",
+    "red": "dot-red",
 }
 
 
-def _status_dot(color: str) -> html.Span:
-    """Create a small colored circle indicator."""
-    base_style = {
-        "display": "inline-block",
-        "width": "12px",
-        "height": "12px",
-        "borderRadius": "50%",
-        "marginLeft": "8px",
-        "verticalAlign": "middle",
-    }
-    base_style.update(_DOT_STYLE.get(color, _DOT_STYLE["red"]))
-    return html.Span(style=base_style)
-
-
-def create_etf_status_card() -> dbc.Card:
-    """Create the initial (empty) Inverse ETF Status card."""
-    return dbc.Card(
-        dbc.CardBody(
-            [
-                html.H6(
-                    "Inverse ETF Status",
-                    className="card-title text-muted mb-2",
-                ),
-                html.Div(id="etf-status-rows", children=[
-                    html.P("Loading...", className="text-muted small"),
-                ]),
-                html.Hr(className="my-2"),
-                html.P(
-                    "--",
-                    id="etf-status-summary",
-                    className="small fw-bold mb-0",
-                ),
-            ]
-        ),
-        id="etf-status-card",
-        className="h-100 shadow-sm",
+def create_etf_status_card() -> html.Div:
+    """Create the initial (empty) Inverse ETF Status KPI card."""
+    return html.Div(
+        [
+            html.Div("", id="etf-status-accent", className="kpi-accent accent-slate"),
+            html.Div(
+                [
+                    html.P(
+                        [
+                            html.I(
+                                id="etf-status-icon",
+                                className="bi bi-activity kpi-icon icon-slate",
+                            ),
+                            "Inverse ETF Status",
+                        ],
+                        className="kpi-title",
+                    )
+                ],
+                className="kpi-header",
+            ),
+            html.Div(
+                [
+                    html.Ul(id="etf-status-list", className="status-list"),
+                    html.P(id="etf-status-summary", className="status-summary"),
+                ],
+                className="kpi-body",
+            ),
+        ],
+        id="kpi-card-etf-status",
+        className="kpi-card",
     )
 
 
 def build_etf_status_rows(etf_statuses: list[dict]) -> tuple:
     """
-    Build the mini-rows and summary text for the ETF status card.
+    Build the mini-rows and summary text for the Inverse ETF Status card.
 
     Args:
-        etf_statuses: List of dicts from etf_status_summary().
+        etf_statuses: Output from etf_status_summary(); a list of per-ETF status items.
 
     Returns:
-        (rows_children, summary_text)
+        tuple[list, str]:
+            (rows_children, summary_text)
     """
     rows = []
     summary_parts = []
@@ -82,20 +75,19 @@ def build_etf_status_rows(etf_statuses: list[dict]) -> tuple:
         else:
             count_text = "No qualifying contracts"
 
-        row = html.Div(
+        row = html.Li(
             [
-                html.Span(
-                    f"{symbol} ",
-                    className="fw-bold",
+                html.Div(
+                    [
+                        html.Span(className=f"dot {_DOT_COLOR_MAP.get(color, 'dot-red')}"),
+                        html.Span(symbol, className="ticker"),
+                        html.Span(count_text, className="status-text"),
+                    ],
+                    className="status-left",
                 ),
-                html.Span(
-                    f"{price:.2f}",
-                    className="text-muted",
-                ),
-                html.Span(f" \u2013 {count_text}", className="small"),
-                _status_dot(color),
+                html.Span(f"{price:,.2f}", className="price"),
             ],
-            className="mb-1",
+            className="status-item",
         )
         rows.append(row)
         summary_parts.append(f"{symbol} {total_green}")

@@ -106,7 +106,7 @@ app.layout = dbc.Container(
                     create_index_card("nasdaq", "Nasdaq Technical"),
                     lg=3, md=4, sm=6, className="mb-3",
                 ),
-                dbc.Col(create_etf_status_card(), lg=2, md=6, sm=6, className="mb-3"),
+                dbc.Col(create_etf_status_card(), lg=3, md=6, sm=6, className="mb-3"),
                 dbc.Col(
                     create_selected_option_card(),
                     lg=2, md=6, sm=6, className="mb-3",
