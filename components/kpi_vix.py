@@ -58,7 +58,7 @@ def create_vix_card() -> html.Div:
                     html.Span(
                         "Loading...",
                         id="vix-badge",
-                        className="kpi-badge badge-slate",
+                        className="mt-2 kpi-badge badge-slate",
                     ),
                 ],
                 className="kpi-body",
@@ -92,7 +92,7 @@ def update_vix_card(
 
     vix_accent_class_name = f"kpi-accent {_ACCENT_COLOR_MAP.get(color, 'accent-slate')}"
     vix_icon_class_name = f"bi bi-graph-up-arrow kpi-icon {_ICON_COLOR_MAP.get(color, 'icon-slate')}"
-    vix_badge_class_name = f"kpi-badge {_BADGE_COLOR_MAP.get(color, 'badge-slate')}"
+    vix_badge_class_name = f"mt-2 kpi-badge {_BADGE_COLOR_MAP.get(color, 'badge-slate')}"
 
     return (
         f"{vix_level:.1f}",

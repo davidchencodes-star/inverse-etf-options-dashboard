@@ -46,7 +46,7 @@ def create_index_card(index_id: str, title: str) -> html.Div:
                         [
                             html.I(
                                 id=f"{index_id}-icon",
-                                className="bi bi-graph-up-arrow kpi-icon icon-slate",
+                                className="bi bi-bar-chart-line-fill kpi-icon icon-slate",
                             ),
                             title,
                         ],
@@ -91,7 +91,7 @@ def create_index_card(index_id: str, title: str) -> html.Div:
                                     "RSI(14): ",
                                     html.Strong("--", id=f"{index_id}-rsi-value"),
                                     " - ",
-                                    html.Span("--", id=f"{index_id}-rsi-label"),
+                                    html.Strong("--", id=f"{index_id}-rsi-label"),
                                 ],
                                 className="kpi-metric",
                             ),
@@ -101,7 +101,7 @@ def create_index_card(index_id: str, title: str) -> html.Div:
                     html.Span(
                         "Loading...",
                         id=f"{index_id}-badge",
-                        className="kpi-badge badge-slate",
+                        className="mt-2 kpi-badge badge-slate",
                     )
                 ],
                 className="kpi-body",
@@ -140,7 +140,7 @@ def update_index_card(
 
     index_accent_class_name = f"kpi-accent {_ACCENT_COLOR_MAP.get(color, 'accent-slate')}"
     index_icon_class_name = f"bi bi-graph-up-arrow kpi-icon {_ICON_COLOR_MAP.get(color, 'icon-slate')}"
-    index_badge_class_name = f"kpi-badge {_BADGE_COLOR_MAP.get(color, 'badge-slate')}"
+    index_badge_class_name = f"mt-2 kpi-badge {_BADGE_COLOR_MAP.get(color, 'badge-slate')}"
 
     return (
         f"{price:,.2f}",
