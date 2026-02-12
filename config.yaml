@@ -42,7 +42,7 @@ delta_bands:
 liquidity:
   min_oi: 200           # Minimum open interest for "green"
   min_volume: 20        # Minimum daily volume for "green"
-  marginal_oi: 50       # Below this = "red" (very low liquidity)
+  poor_oi: 50       # Below this = "red" (very low liquidity)
 
 # --- RSI Thresholds ---
 rsi_thresholds:

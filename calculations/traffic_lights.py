@@ -24,38 +24,26 @@ def vix_traffic_light(vix_level: float, config: dict) -> dict[str, str]:
     Determine VIX regime color.
 
     Args:
-        vix_level (float): Current VIX value.
-        config (dict): Full config dict.
+        vix_level: Current VIX value.
+        config: Full config dict.
 
     Returns:
-        dict: {"color": "green"|"yellow"|"red", "label": str}
+        {"color": "green"|"yellow"|"red", "label": str}
     """
     vix_cfg = config.get("vix_regime", {})
     green_range = vix_cfg.get("green", [18, 28])
     red_threshold = vix_cfg.get("red", 35)
 
     if green_range[0] <= vix_level <= green_range[1]:
-        return {
-            "color": "green",
-            "label": "Favorable for premium selling",
-        }
-    elif vix_level >= red_threshold:
-        return {
-            "color": "red",
-            "label": "Extreme stress - consider reducing size or pausing",
-        }
-    else:
-        # Yellow: <18 or 28-35
-        if vix_level < green_range[0]:
-            return {
-                "color": "yellow",
-                "label": "Low volatility - thin premiums",
-            }
-        else:
-            return {
-                "color": "yellow",
-                "label": "Elevated risk - proceed with caution",
-            }
+        return {"color": "green", "label": "Favorable for premium selling"}
+
+    if vix_level >= red_threshold:
+        return {"color": "red", "label": "Extreme stress - consider reducing size or pausing"}
+
+    if vix_level < green_range[0]:
+        return {"color": "yellow", "label": "Low volatility - thin premiums"}
+
+    return {"color": "yellow", "label": "Elevated risk - proceed with caution"}
 
 
 # =========================================================================
@@ -87,33 +75,33 @@ def index_traffic_light(
     above_sma20 = technicals.get("above_sma20", False)
     above_sma50 = technicals.get("above_sma50", False)
     above_sma100 = technicals.get("above_sma100", False)
+    below_sma20 = technicals.get("below_sma20", False)
+    below_sma50 = technicals.get("below_sma50", False)
+    below_sma100 = technicals.get("below_sma100", False)
     rsi = technicals.get("rsi14", 50.0)
     sma20 = technicals.get("sma20", 0)
     sma50 = technicals.get("sma50", 0)
 
     if strategy == "short_calls":
-        # ----- Short Calls (bearish/neutral bias) -----
-        downtrend_or_weakening = (
-            (not above_sma20 and not above_sma50)
-            or (sma20 < sma50 and sma20 > 0 and sma50 > 0)
-        )
-        if downtrend_or_weakening and rsi >= neutral_high:
+        weakening = (below_sma20 and below_sma50) or (sma20 < sma50)
+        strong_up = above_sma20 and above_sma50 and above_sma100
+        
+        if weakening and rsi >= neutral_high:
             return {"color": "green"}
 
-        strong_uptrend = above_sma20 and above_sma50 and above_sma100
-        if strong_uptrend and rsi < neutral_high:
+        if strong_up and rsi < neutral_high:
             return {"color": "red"}
 
         return {"color": "yellow"}
 
     else:
-        # ----- Cash-Secured Puts (bullish/neutral bias) -----
-        strong_uptrend = above_sma20 and above_sma50 and above_sma100
-        if strong_uptrend and rsi <= neutral_low:
+        uptrend = above_sma20 and above_sma50 and above_sma100
+        strong_down = below_sma50 and below_sma100
+        
+        if uptrend and rsi <= neutral_low:
             return {"color": "green"}
 
-        strong_downtrend = not above_sma50 and not above_sma100
-        if strong_downtrend and rsi < neutral_low:
+        if strong_down and rsi < neutral_low:
             return {"color": "red"}
 
         return {"color": "yellow"}
@@ -161,7 +149,7 @@ def option_traffic_light(
     oi = option_row.get("openInterest", 0) or 0
     volume = option_row.get("volume", 0) or 0
     ann_return = option_row.get("ann_return", 0) or 0
-    marginal_oi = config.get("liquidity", {}).get("marginal_oi", 50)
+    poor_oi = config.get("liquidity", {}).get("poor_oi", 50)
 
     # --- RED conditions ---
     # Return too low, delta outside band, very low liquidity,
@@ -177,7 +165,7 @@ def option_traffic_light(
             "color": "red",
             "tooltip": f"Delta {delta_val} outside allowed band",
         }
-    if oi < marginal_oi or volume == 0:
+    if oi < poor_oi or volume == 0:
         return {
             "color": "red",
             "tooltip": f"Very low liquidity (OI={oi}, Vol={volume})",
@@ -235,22 +223,23 @@ def selected_option_color(
         config: Full config dict.
 
     Returns:
-        {"color": "green"|"yellow"|"red", "label": str}
+        {"color": "green"|"yellow"|"red"}
     """
     target = config.get("annualized_return_target", 30)
     min_oi = config.get("liquidity", {}).get("min_oi", 200)
     min_vol = config.get("liquidity", {}).get("min_volume", 20)
-    marginal_oi = config.get("liquidity", {}).get("marginal_oi", 50)
+    poor_oi = config.get("liquidity", {}).get("poor_oi", 50)
 
     liquidity_ok = oi >= min_oi and volume >= min_vol
-    liquidity_poor = oi < marginal_oi or volume == 0
+    liquidity_poor = oi < poor_oi or volume == 0
 
     if ann_return >= target and liquidity_ok:
-        return {"color": "green", "label": "Meets all targets"}
-    elif ann_return < 20 or liquidity_poor:
-        return {"color": "red", "label": "Below minimum thresholds"}
-    else:
-        return {"color": "yellow", "label": "Near threshold \u2013 review carefully"}
+        return {"color": "green"}
+
+    if ann_return < 20 or liquidity_poor:
+        return {"color": "red"}
+
+    return {"color": "yellow"}
 
 
 # =========================================================================

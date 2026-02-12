@@ -4,13 +4,9 @@ Technical indicator calculations.
 Computes SMA (20/50/100) and RSI(14) from historical daily price data.
 """
 
-import logging
 from typing import Any
 
 import pandas as pd
-
-logger = logging.getLogger(__name__)
-
 
 def compute_sma(prices: pd.Series, window: int) -> pd.Series:
     """
@@ -44,7 +40,6 @@ def compute_rsi(prices: pd.Series, period: int = 14) -> pd.Series:
     gain = delta.where(delta > 0, 0.0)
     loss = (-delta).where(delta < 0, 0.0)
 
-    # Wilder's smoothing (EMA with alpha = 1/period)
     avg_gain = gain.ewm(alpha=1.0 / period, min_periods=period, adjust=False).mean()
     avg_loss = loss.ewm(alpha=1.0 / period, min_periods=period, adjust=False).mean()
 
@@ -66,10 +61,9 @@ def get_index_technicals(historical_df: pd.DataFrame) -> dict[str, Any]:
             - price: latest closing price
             - sma20, sma50, sma100: latest SMA values
             - rsi14: latest RSI(14) value
-            - sma20_series, sma50_series, sma100_series: full series (for charts)
-            - rsi_series: full RSI series (for charts)
             - above_sma20, above_sma50, above_sma100: bool flags
-            - rsi_label: str ('Overbought', 'Oversold', 'Neutral', etc.)
+            - below_sma20, below_sma50, below_sma100: bool flags
+            - rsi_label: str ("Overbought", "Oversold", "Neutral", etc.)
     """
     if historical_df.empty or "Close" not in historical_df.columns:
         return {
@@ -81,6 +75,9 @@ def get_index_technicals(historical_df: pd.DataFrame) -> dict[str, Any]:
             "above_sma20": False,
             "above_sma50": False,
             "above_sma100": False,
+            "below_sma20": False,
+            "below_sma50": False,
+            "below_sma100": False,
             "rsi_label": "N/A",
         }
 
@@ -97,7 +94,6 @@ def get_index_technicals(historical_df: pd.DataFrame) -> dict[str, Any]:
     latest_sma100 = float(sma100.iloc[-1]) if pd.notna(sma100.iloc[-1]) else 0.0
     latest_rsi = float(rsi.iloc[-1]) if pd.notna(rsi.iloc[-1]) else 50.0
 
-    # RSI label
     if latest_rsi >= 70:
         rsi_label = "Overbought"
     elif latest_rsi <= 30:
@@ -118,5 +114,8 @@ def get_index_technicals(historical_df: pd.DataFrame) -> dict[str, Any]:
         "above_sma20": latest_price > latest_sma20,
         "above_sma50": latest_price > latest_sma50,
         "above_sma100": latest_price > latest_sma100,
+        "below_sma20": latest_price < latest_sma20,
+        "below_sma50": latest_price < latest_sma50,
+        "below_sma100": latest_price < latest_sma100,
         "rsi_label": rsi_label,
     }

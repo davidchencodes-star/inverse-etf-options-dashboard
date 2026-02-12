@@ -152,7 +152,7 @@ def enrich_chain(
 
     min_oi = liquidity_cfg.get("min_oi", 200)
     min_volume = liquidity_cfg.get("min_volume", 20)
-    marginal_oi = liquidity_cfg.get("marginal_oi", 50)
+    poor_oi = liquidity_cfg.get("poor_oi", 50)
 
     # --- Return flag ---
     df["return_ok"] = df["ann_return"] >= return_target
@@ -184,7 +184,7 @@ def enrich_chain(
         df["volume"] >= min_volume
     )
     df["liquidity_marginal"] = (
-        (df["openInterest"] < min_oi) & (df["openInterest"] >= marginal_oi)
+        (df["openInterest"] < min_oi) & (df["openInterest"] >= poor_oi)
     ) | ((df["volume"] < min_volume) & (df["volume"] > 0))
 
     return df
