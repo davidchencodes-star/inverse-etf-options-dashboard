@@ -23,10 +23,7 @@ def register_option_selection_callbacks(app):
         Output("selected-option-value", "children"),
         Output("selected-option-detail", "children"),
         Output("selected-option-liquidity", "children"),
-        Output("selected-option-badge", "children"),
-        Output("selected-option-badge", "color"),
-        Output("selected-option-badge", "style"),
-        Output("selected-option-card", "className"),
+        Output("selected-option-accent", "className"),
         # Payoff chart
         Output("payoff-chart", "figure"),
         # Inputs

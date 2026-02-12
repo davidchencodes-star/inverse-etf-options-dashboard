@@ -1,61 +1,56 @@
 """
-KPI Card 5: Selected Option Performance.
+Selected Option Performance Card
 
-Displays details for a specific option contract selected from the chain table.
-Initially empty; populated when a row is clicked in the option chain.
+Shows detailed metrics for an option contract selected from the chain table.
+Populated on row click; initially empty.
 """
 
-import dash_bootstrap_components as dbc
 from dash import html
 
-_COLOR_MAP = {
-    "green": "success",
-    "yellow": "warning",
-    "red": "danger",
-}
 
-_BORDER_MAP = {
-    "green": "border-start border-success border-4",
-    "yellow": "border-start border-warning border-4",
-    "red": "border-start border-danger border-4",
-}
-
-
-def create_selected_option_card() -> dbc.Card:
-    """Create the initial (empty) Selected Option Performance card."""
-    return dbc.Card(
-        dbc.CardBody(
-            [
-                html.H6(
-                    "Selected Option",
-                    className="card-title text-muted mb-1",
-                ),
-                html.H3(
-                    "Click a row in the chain",
-                    id="selected-option-value",
-                    className="mb-1 fs-6 text-muted",
-                ),
-                html.P(
-                    "",
-                    id="selected-option-detail",
-                    className="small mb-1",
-                ),
-                html.P(
-                    "",
-                    id="selected-option-liquidity",
-                    className="small mb-2",
-                ),
-                dbc.Badge(
-                    "",
-                    id="selected-option-badge",
-                    color="secondary",
-                    className="px-3 py-2",
-                    style={"display": "none"},
-                ),
-            ]
-        ),
-        id="selected-option-card",
-        className="h-100 shadow-sm",
+def create_selected_option_card() -> html.Div:
+    """Create Selected Option Performance card."""
+    return html.Div(
+        [
+            html.Div(id="selected-option-accent", className="kpi-accent accent-slate"),
+            html.Div(
+                [
+                    html.P(
+                        [
+                            html.I(
+                                id="selected-option-icon",
+                                className="bi bi-check-circle-fill kpi-icon icon-green",
+                            ),
+                            "Selected Option",
+                        ],
+                        className="kpi-title",
+                    )
+                ],
+                className="kpi-header",
+            ),
+            html.Div(
+                [
+                    html.P(
+                        "Click a row in the chain",
+                        id="selected-option-value",
+                        className="",
+                    ),
+                    html.P(
+                        "",
+                        id="selected-option-detail",
+                        className="",
+                    ),
+                    html.P(
+                        "",
+                        id="selected-option-liquidity",
+                        className="",
+                    ),
+                ],
+                className="kpi-body",
+            ),
+        ],
+        id="kpi-card-selected-option",
+        className="kpi-card",
     )
 
 
@@ -65,23 +60,23 @@ def update_selected_option_card(
     strategy_label: str,
 ) -> tuple:
     """
-    Return updated values for the Selected Option Performance card.
+    Update Selected Option Performance card with contract details and styling.
 
     Args:
-        option_data: Dict with option details (from the chain row).
-        performance_color: Dict from selected_option_color().
-        strategy_label: "Short Call" or "Cash-Secured Put".
+        option_data: Dict with option metrics from chain row (ann_return, dte, delta, IV, etc.).
+        performance_color: Dict from selected_option_color() with 'color' key.
+        strategy_label: Strategy name ("Short Call" or "Cash-Secured Put").
 
     Returns:
-        (value_text, detail_text, liquidity_text, badge_text, badge_color,
-         badge_style, card_class)
+        Tuple of 4 strings for updating card components:
+        (value_text, detail_text, liquidity_text, accent_class)
     """
-    ann_return = option_data.get("ann_return", 0)
-    color = performance_color.get("color", "yellow")
-    label = performance_color.get("label", "")
 
-    strike = option_data.get("strike", 0)
-    expiration = option_data.get("expiration", "")
+    color = performance_color.get("color", "slate")
+    if (color not in ["green", "yellow", "red", "slate"]):
+        color = "slate"
+
+    ann_return = option_data.get("ann_return", 0)
     dte = option_data.get("dte", 0)
     delta = option_data.get("delta", "N/A")
     iv = option_data.get("impliedVolatility", 0)
@@ -106,15 +101,9 @@ def update_selected_option_card(
     )
     liquidity_text = f"OI {oi:,} | Vol {volume:,}"
 
-    badge_variant = _COLOR_MAP.get(color, "secondary")
-    border_class = _BORDER_MAP.get(color, "")
-
     return (
         value_text,
         detail_text,
         liquidity_text,
-        f"{color.capitalize()} \u2013 {label}",
-        badge_variant,
-        {"display": "inline-block"},
-        f"h-100 shadow-sm {border_class}",
+        f"kpi-accent accent-{color}",
     )

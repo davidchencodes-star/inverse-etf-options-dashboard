@@ -97,20 +97,23 @@ app.layout = dbc.Container(
         # --- KPI Cards Row ---
         dbc.Row(
             [
-                dbc.Col(create_vix_card(), lg=3, md=4, sm=6, className="mb-3"),
+                dbc.Col(create_vix_card(), lg=3, className="mb-3"),
                 dbc.Col(
                     create_index_card("sp500", "S&P 500 Technical"),
-                    lg=3, md=4, sm=6, className="mb-3",
+                    lg=3, className="mb-3",
                 ),
                 dbc.Col(
                     create_index_card("nasdaq", "Nasdaq Technical"),
-                    lg=3, md=4, sm=6, className="mb-3",
+                    lg=3, className="mb-3",
                 ),
-                dbc.Col(create_etf_status_card(), lg=3, md=6, sm=6, className="mb-3"),
-                dbc.Col(
-                    create_selected_option_card(),
-                    lg=2, md=6, sm=6, className="mb-3",
-                ),
+                dbc.Col(create_etf_status_card(), lg=3, className="mb-3"),
+            ],
+            className="g-3",
+        ),
+
+        dbc.Row(
+            [
+                dbc.Col(create_selected_option_card(), lg=6, className="mb-3"),
             ],
             className="g-3",
         ),
