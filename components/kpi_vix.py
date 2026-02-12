@@ -1,8 +1,9 @@
 """
-KPI Card 1: VIX Regime -- Volatility Traffic Light.
+KPI Card 1: VIX Regime – Volatility Traffic Light.
 
-Displays current VIX level, daily change, and a colored status pill
-indicating whether the volatility environment favors premium selling.
+Displays the current VIX level, daily change, and a color-coded
+status indicator showing whether the current volatility
+environment favors premium selling.
 """
 
 from dash import html
@@ -30,7 +31,7 @@ _BADGE_COLOR_MAP = {
 
 
 def create_vix_card() -> html.Div:
-    """Create the initial (empty) VIX Regime KPI card. Default accent, icon, badge = slate."""
+    """Create an empty VIX Regime KPI card with slate styling (accent, icon, badge)."""
     return html.Div(
         [
             html.Div("", id="vix-accent", className="kpi-accent accent-slate"),
@@ -63,7 +64,7 @@ def create_vix_card() -> html.Div:
                 className="kpi-body",
             ),
         ],
-        id="kpi-card",
+        id="kpi-card-vix",
         className="kpi-card",
     )
 
@@ -75,19 +76,19 @@ def update_vix_card(
     traffic_light: dict,
 ) -> tuple:
     """
-    Return updated values for VIX card components.
+    Update the VIX Regime KPI card display values and styling.
 
-    Color progression: default slate → green (favorable) → yellow (caution) → red (risk).
-    Accent, icon, and badge all update to the same regime color (existing CSS classes).
+    Color progression: slate (default) → green (favorable) → yellow (caution) → red (risk).
+    Accent bar, icon, and badge are all set to the same regime color via CSS classes.
 
     Returns:
-        (vix_value_text, vix_change_text, vix_badge_text, vix_accent_class_name, vix_icon_class_name, vix_badge_class_name)
+        (vix_value_text, vix_change_text, vix_badge_text,
+        vix_accent_class_name, vix_icon_class_name, vix_badge_class_name)
     """
-    color = traffic_light.get("color", "yellow")
-    label = traffic_light.get("label", "N / A")
+    color = traffic_light.get("color", "slate")
+    label = traffic_light.get("label", "N/A")
 
-    sign = "+" if vix_change >= 0 else ""
-    change_text = f"{sign}{vix_change:.1f} ({sign}{vix_change_pct:.1f}%) today"
+    change_text = f"{vix_change:+.1f} ({vix_change_pct:+.1f}%) today"
 
     vix_accent_class_name = f"kpi-accent {_ACCENT_COLOR_MAP.get(color, 'accent-slate')}"
     vix_icon_class_name = f"bi bi-graph-up-arrow kpi-icon {_ICON_COLOR_MAP.get(color, 'icon-slate')}"

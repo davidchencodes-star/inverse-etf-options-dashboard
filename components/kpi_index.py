@@ -1,60 +1,114 @@
 """
-KPI Cards 2 & 3: S&P 500 / Nasdaq Technical Regime -- SMA + RSI Traffic Light.
+KPI Cards 2 & 3: S&P 500 / Nasdaq Technical Regime (SMA + RSI Traffic Light)
 
-Displays index price, SMA 20/50/100 values, RSI(14), and a colored status
-pill whose color adapts based on the selected strategy (Short Calls vs CSP).
+Shows the index price, SMA(20/50/100), and RSI(14), plus a color-coded status pill.
+The pill color adapts to the selected strategy (Short Calls vs. Cash-Secured Puts).
 """
 
-import dash_bootstrap_components as dbc
 from dash import html
 
-_COLOR_MAP = {
-    "green": "success",
-    "yellow": "warning",
-    "red": "danger",
+_ACCENT_COLOR_MAP = {
+    "green": "accent-green",
+    "yellow": "accent-yellow",
+    "red": "accent-red",
+    "slate": "accent-slate",
 }
 
-_BORDER_MAP = {
-    "green": "border-start border-success border-4",
-    "yellow": "border-start border-warning border-4",
-    "red": "border-start border-danger border-4",
+_ICON_COLOR_MAP = {
+    "green": "icon-green",
+    "yellow": "icon-yellow",
+    "red": "icon-red",
+    "slate": "icon-slate",
+}
+
+_BADGE_COLOR_MAP = {
+    "green": "badge-green",
+    "yellow": "badge-yellow",
+    "red": "badge-red",
+    "slate": "badge-slate",
 }
 
 
-def create_index_card(index_id: str, title: str) -> dbc.Card:
+def create_index_card(index_id: str, title: str) -> html.Div:
     """
-    Create an index technical regime KPI card.
+    Create an Index Technical Regime KPI card.
 
     Args:
-        index_id: Prefix for component IDs (e.g. 'sp500' or 'nasdaq').
-        title: Card title (e.g. 'S&P 500 Technical').
+        index_id: Prefix for component IDs (e.g. "sp500" or "nasdaq").
+        title: Card title (e.g. "S&P 500 Technical").
     """
-    return dbc.Card(
-        dbc.CardBody(
-            [
-                html.H6(title, className="card-title text-muted mb-1"),
-                html.H3("--", id=f"{index_id}-price", className="mb-1"),
-                html.P(
-                    "--",
-                    id=f"{index_id}-sma-line",
-                    className="small mb-1",
-                    style={"fontFamily": "monospace"},
-                ),
-                html.P(
-                    "--",
-                    id=f"{index_id}-rsi-line",
-                    className="small mb-2",
-                ),
-                dbc.Badge(
-                    "Loading...",
-                    id=f"{index_id}-badge",
-                    color="secondary",
-                    className="px-3 py-2",
-                ),
-            ]
-        ),
-        id=f"{index_id}-card",
-        className="h-100 shadow-sm",
+    return html.Div(
+        [
+            html.Div("", id=f"{index_id}-accent", className="kpi-accent accent-slate"),
+            html.Div(
+                [
+                    html.P(
+                        [
+                            html.I(
+                                id=f"{index_id}-icon",
+                                className="bi bi-graph-up-arrow kpi-icon icon-slate",
+                            ),
+                            title,
+                        ],
+                        className="kpi-title",
+                    )
+                ],
+                className="kpi-header",
+            ),
+            html.Div(
+                [
+                    html.P("--", id=f"{index_id}-value", className="kpi-value"),
+                    html.Div(
+                        [
+                            html.Span(
+                                [
+                                    "SMA20: ",
+                                    html.Strong("--", id=f"{index_id}-sma20-value"),
+                                ],
+                                className="kpi-metric",
+                            ),
+                            html.Span(
+                                [
+                                    "SMA50: ",
+                                    html.Strong("--", id=f"{index_id}-sma50-value"),
+                                ],
+                                className="kpi-metric",
+                            ),
+                            html.Span(
+                                [
+                                    "SMA100: ",
+                                    html.Strong("--", id=f"{index_id}-sma100-value"),
+                                ],
+                                className="kpi-metric",
+                            ),
+                        ], 
+                        className="kpi-metric-row"
+                    ),
+                    html.Div(
+                        [
+                            html.Span(
+                                [
+                                    "RSI(14): ",
+                                    html.Strong("--", id=f"{index_id}-rsi-value"),
+                                    " - ",
+                                    html.Span("--", id=f"{index_id}-rsi-label"),
+                                ],
+                                className="kpi-metric",
+                            ),
+                        ], 
+                        className="kpi-metric-row"
+                    ),
+                    html.Span(
+                        "Loading...",
+                        id=f"{index_id}-badge",
+                        className="kpi-badge badge-slate",
+                    )
+                ],
+                className="kpi-body",
+            ),
+        ],
+        id=f"kpi-card-{index_id}",
+        className="kpi-card",
     )
 
 
@@ -64,15 +118,15 @@ def update_index_card(
     strategy_label: str,
 ) -> tuple:
     """
-    Return updated values for an index KPI card.
+    pdate an Index KPI card with latest technical values and regime styling.
 
     Args:
-        technicals: Dict from get_index_technicals().
-        traffic_light: Dict from index_traffic_light().
-        strategy_label: "Short Calls" or "Cash-Secured Puts".
+        technicals: Output from get_index_technicals().
+        traffic_light: Output from index_traffic_light().
+        strategy_label: Strategy text to show (e.g. "Short Calls" or "Cash-Secured Puts").
 
     Returns:
-        (price_text, sma_line, rsi_line, badge_text, badge_color, card_class)
+        Tuple of updated text values and CSS classNames in callback output order.
     """
     price = technicals.get("price", 0)
     sma20 = technicals.get("sma20", 0)
@@ -81,29 +135,22 @@ def update_index_card(
     rsi = technicals.get("rsi14", 0)
     rsi_label = technicals.get("rsi_label", "N/A")
 
-    color = traffic_light.get("color", "yellow")
+    color = traffic_light.get("color", "slate")
+    badge_text = f"{color.capitalize()} for {strategy_label}" if color != "slate" else "N/A"
 
-    # SMA checkmarks
-    def sma_indicator(above: bool) -> str:
-        return "\u2713" if above else "\u2717"
-
-    sma_line = (
-        f"SMA20: {sma20:,.0f} {sma_indicator(technicals.get('above_sma20', False))} | "
-        f"SMA50: {sma50:,.0f} {sma_indicator(technicals.get('above_sma50', False))} | "
-        f"SMA100: {sma100:,.0f} {sma_indicator(technicals.get('above_sma100', False))}"
-    )
-    rsi_line = f"RSI(14): {rsi:.0f} \u2013 {rsi_label}"
-
-    badge_variant = _COLOR_MAP.get(color, "secondary")
-    border_class = _BORDER_MAP.get(color, "")
-
-    badge_text = f"{color.capitalize()} for {strategy_label}"
+    index_accent_class_name = f"kpi-accent {_ACCENT_COLOR_MAP.get(color, 'accent-slate')}"
+    index_icon_class_name = f"bi bi-graph-up-arrow kpi-icon {_ICON_COLOR_MAP.get(color, 'icon-slate')}"
+    index_badge_class_name = f"kpi-badge {_BADGE_COLOR_MAP.get(color, 'badge-slate')}"
 
     return (
         f"{price:,.2f}",
-        sma_line,
-        rsi_line,
+        f"{sma20:,.0f}",
+        f"{sma50:,.0f}",
+        f"{sma100:,.0f}",
+        f"{rsi:,.0f}",
+        f"{rsi_label}",
         badge_text,
-        badge_variant,
-        f"h-100 shadow-sm {border_class}",
+        index_accent_class_name,
+        index_icon_class_name,
+        index_badge_class_name,
     )
