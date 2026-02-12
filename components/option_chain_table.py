@@ -115,6 +115,7 @@ def prepare_chain_data(
         iv_pct = iv_raw * 100 if iv_raw < 5 else iv_raw  # Handle both decimal and % formats
 
         record = {
+            "contractSymbol": str(row.get("contractSymbol", "")),
             "traffic_light": dot,
             "type": str(row.get("type", "")),
             "expiration": str(row.get("expiration", "")),

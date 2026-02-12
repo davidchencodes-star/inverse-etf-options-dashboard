@@ -65,7 +65,7 @@ def update_selected_option_card(
     Args:
         option_data: Dict with option metrics from chain row (ann_return, dte, delta, IV, etc.).
         performance_color: Dict from selected_option_color() with 'color' key.
-        strategy_label: Strategy name ("Short Call" or "Cash-Secured Put").
+        strategy_label: Strategy name ('Short Call' or 'Cash-Secured Put').
 
     Returns:
         Tuple of 4 strings for updating card components:
