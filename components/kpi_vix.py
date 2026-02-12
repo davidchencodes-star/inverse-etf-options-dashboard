@@ -5,41 +5,66 @@ Displays current VIX level, daily change, and a colored status pill
 indicating whether the volatility environment favors premium selling.
 """
 
-import dash_bootstrap_components as dbc
 from dash import html
 
-# Color mapping for Bootstrap badge variants
-_COLOR_MAP = {
-    "green": "success",
-    "yellow": "warning",
-    "red": "danger",
+_ACCENT_COLOR_MAP = {
+    "green": "accent-green",
+    "yellow": "accent-yellow",
+    "red": "accent-red",
+    "slate": "accent-slate",
 }
 
-_BORDER_MAP = {
-    "green": "border-start border-success border-4",
-    "yellow": "border-start border-warning border-4",
-    "red": "border-start border-danger border-4",
+_ICON_COLOR_MAP = {
+    "green": "icon-green",
+    "yellow": "icon-yellow",
+    "red": "icon-red",
+    "slate": "icon-slate",
+}
+
+_BADGE_COLOR_MAP = {
+    "green": "badge-green",
+    "yellow": "badge-yellow",
+    "red": "badge-red",
+    "slate": "badge-slate",
 }
 
 
-def create_vix_card() -> dbc.Card:
-    """Create the initial (empty) VIX Regime KPI card."""
-    return dbc.Card(
-        dbc.CardBody(
-            [
-                html.H6("VIX Regime", className="card-title text-muted mb-1"),
-                html.H3("--", id="vix-value", className="mb-1"),
-                html.P("--", id="vix-change", className="text-muted small mb-2"),
-                dbc.Badge(
-                    "Loading...",
-                    id="vix-badge",
-                    color="secondary",
-                    className="px-3 py-2",
-                ),
-            ]
-        ),
-        id="vix-card",
-        className="h-100 shadow-sm",
+def create_vix_card() -> html.Div:
+    """Create the initial (empty) VIX Regime KPI card. Default accent, icon, badge = slate."""
+    return html.Div(
+        [
+            html.Div("", id="vix-accent", className="kpi-accent accent-slate"),
+            html.Div(
+                [
+                    html.P(
+                        [
+                            html.I(
+                                id="vix-icon",
+                                className="bi bi-graph-up-arrow kpi-icon icon-slate",
+                            ),
+                            "VIX Regime",
+                        ],
+                        className="kpi-title",
+                    )
+                ],
+                className="kpi-header",
+            ),
+            html.Div(
+                [
+                    html.P("--", id="vix-value", className="kpi-value"),
+                    html.P("--", id="vix-change", className="kpi-change"),
+                    html.Br(),
+                    html.Span(
+                        "Loading...",
+                        id="vix-badge",
+                        className="kpi-badge badge-slate",
+                    ),
+                ],
+                className="kpi-body",
+            ),
+        ],
+        id="kpi-card",
+        className="kpi-card",
     )
 
 
@@ -52,23 +77,27 @@ def update_vix_card(
     """
     Return updated values for VIX card components.
 
+    Color progression: default slate → green (favorable) → yellow (caution) → red (risk).
+    Accent, icon, and badge all update to the same regime color (existing CSS classes).
+
     Returns:
-        (vix_value_text, vix_change_text, badge_text, badge_color, card_class)
+        (vix_value_text, vix_change_text, vix_badge_text, vix_accent_class_name, vix_icon_class_name, vix_badge_class_name)
     """
     color = traffic_light.get("color", "yellow")
-    label = traffic_light.get("label", "")
+    label = traffic_light.get("label", "N / A")
 
-    # Format change text
     sign = "+" if vix_change >= 0 else ""
     change_text = f"{sign}{vix_change:.1f} ({sign}{vix_change_pct:.1f}%) today"
 
-    badge_variant = _COLOR_MAP.get(color, "secondary")
-    border_class = _BORDER_MAP.get(color, "")
+    vix_accent_class_name = f"kpi-accent {_ACCENT_COLOR_MAP.get(color, 'accent-slate')}"
+    vix_icon_class_name = f"bi bi-graph-up-arrow kpi-icon {_ICON_COLOR_MAP.get(color, 'icon-slate')}"
+    vix_badge_class_name = f"kpi-badge {_BADGE_COLOR_MAP.get(color, 'badge-slate')}"
 
     return (
         f"{vix_level:.1f}",
         change_text,
-        f"{label}",
-        badge_variant,
-        f"h-100 shadow-sm {border_class}",
+        label,
+        vix_accent_class_name,
+        vix_icon_class_name,
+        vix_badge_class_name,
     )

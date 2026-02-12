@@ -44,7 +44,10 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 app = dash.Dash(
     __name__,
-    external_stylesheets=[dbc.themes.FLATLY],
+    external_stylesheets=[
+        dbc.themes.FLATLY,
+        "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    ],
     title="Inverse ETF Options Dashboard",
     update_title="Refreshing...",
     suppress_callback_exceptions=True,
@@ -94,7 +97,7 @@ app.layout = dbc.Container(
         # --- KPI Cards Row ---
         dbc.Row(
             [
-                dbc.Col(create_vix_card(), lg=2, md=4, sm=6, className="mb-3"),
+                dbc.Col(create_vix_card(), lg=3, md=4, sm=6, className="mb-3"),
                 dbc.Col(
                     create_index_card("sp500", "S&P 500 Technical"),
                     lg=3, md=4, sm=6, className="mb-3",

@@ -37,8 +37,9 @@ def register_data_refresh_callbacks(app):
         Output("vix-value", "children"),
         Output("vix-change", "children"),
         Output("vix-badge", "children"),
-        Output("vix-badge", "color"),
-        Output("vix-card", "className"),
+        Output("vix-accent", "className"),
+        Output("vix-icon", "className"),
+        Output("vix-badge", "className"),
         # S&P 500 card outputs
         Output("sp500-price", "children"),
         Output("sp500-sma-line", "children"),

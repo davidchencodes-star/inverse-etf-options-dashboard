@@ -2,6 +2,13 @@
    Inverse ETF Options Dashboard - Custom Styles
    ============================================================ */
 
+:root {
+    --etf-green: #16A34A;
+    --eft-yellow: #F59E0B;
+    --eft-red: #DC2626;
+    --eft-slate: #64748B;
+}
+
 /* --- KPI Cards --- */
 .card {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -93,6 +100,119 @@
 /* --- Loading Spinner --- */
 ._dash-loading {
     margin: auto;
+}
+
+/* --- KPI Card --- */
+.kpi-card {
+    height: 100%;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.kpi-accent {
+    width: 100%;
+    height: 5px;
+}
+
+.accent-green {
+    background: var(--etf-green);
+}
+
+.accent-yellow {
+    background: var(--eft-yellow);
+}
+
+.accent-red {
+    background: var(--eft-red);
+}
+
+.accent-slate {
+    background: var(--eft-slate);
+}
+
+.kpi-header {
+    padding: 12px 14px 10px 14px;
+    background: linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 100%);
+    border-bottom: 1px solid #EEF2F7;
+}
+
+.kpi-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+}
+
+.kpi-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.icon-green {
+    color: var(--etf-green);
+}
+
+.icon-yellow {
+    color: var(--eft-yellow);
+}
+
+.icon-red {
+    color: var(--eft-red);
+}
+
+.icon-slate {
+    color: var(--eft-slate);
+}
+
+
+.kpi-body {
+    padding: 12px 14px 14px 14px;
+}
+
+.kpi-value {
+    margin: 0 0 8px 0;
+    font-size: 44px;
+    line-height: 1;
+    font-weight: 900;
+}
+
+.kpi-change {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.kpi-badge {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    color: white;
+    user-select: none;
+}
+
+.badge-green {
+    background: var(--etf-green);
+}
+
+.badge-yellow {
+    background: var(--eft-yellow);
+}
+
+.badge-red {
+    background: var(--eft-red);
+}
+
+.badge-slate {
+    background: var(--eft-slate);
 }
 
 /* --- Responsive Adjustments --- */
