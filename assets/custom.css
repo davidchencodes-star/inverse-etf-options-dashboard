@@ -215,6 +215,10 @@
     background: var(--eft-slate);
 }
 
+.selected-option-value {
+    font-weight: 600 !important;
+}
+
 .etf-text-green {
     color: var(--etf-green);
 }
