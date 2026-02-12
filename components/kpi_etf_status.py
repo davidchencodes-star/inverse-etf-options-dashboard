@@ -1,21 +1,15 @@
 """
-KPI Card 4: Inverse ETF Status (4-Level Card)
+Inverse ETF Status Card
 
-Shows whether SPXS, SQQQ, SH, and SDS currently have attractive short-option candidates.
-Each ETF is displayed as a mini-row with ticker, last price, candidate count, and a color-coded status dot.
+Displays short-option opportunities for SPXS, SQQQ, SH, and SDS with price,
+candidate count, and regime indicator for each ETF.
 """
 
 from dash import html
 
-_DOT_COLOR_MAP = {
-    "green": "dot-green",
-    "yellow": "dot-yellow",
-    "red": "dot-red",
-}
-
 
 def create_etf_status_card() -> html.Div:
-    """Create the initial (empty) Inverse ETF Status KPI card."""
+    """Create Inverse ETF Status KPI card."""
     return html.Div(
         [
             html.Div("", id="etf-status-accent", className="kpi-accent accent-slate"),
@@ -49,14 +43,15 @@ def create_etf_status_card() -> html.Div:
 
 def build_etf_status_rows(etf_statuses: list[dict]) -> tuple:
     """
-    Build the mini-rows and summary text for the Inverse ETF Status card.
+    Build display rows and summary for Inverse ETF Status card.
 
     Args:
-        etf_statuses: Output from etf_status_summary(); a list of per-ETF status items.
+        etf_statuses: List of ETF status dicts from etf_status_summary().
 
     Returns:
-        tuple[list, str]:
-            (rows_children, summary_text)
+        Tuple of (rows_children, summary_text):
+            rows_children: List of html.Li elements for each ETF
+            summary_text: String summarizing total candidates across all ETFs
     """
     rows = []
     summary_parts = []
@@ -69,17 +64,19 @@ def build_etf_status_rows(etf_statuses: list[dict]) -> tuple:
         total_green = etf["total_green"]
         color = etf["status_color"]
 
-        # Build the row text
+        if (color not in ["green", "yellow", "red"]):
+            color = "red"
+
         if total_green > 0:
-            count_text = f"{green_calls} green calls, {green_puts} green puts"
+            count_text = f"{green_calls} Green Calls, {green_puts} Green Puts"
         else:
-            count_text = "No qualifying contracts"
+            count_text = "No Qualifying Contracts"
 
         row = html.Li(
             [
                 html.Div(
                     [
-                        html.Span(className=f"dot {_DOT_COLOR_MAP.get(color, 'dot-red')}"),
+                        html.Span(className=f"dot dot-{color}"),
                         html.Span(symbol, className="ticker"),
                         html.Span(count_text, className="status-text"),
                     ],

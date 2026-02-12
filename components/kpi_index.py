@@ -1,41 +1,20 @@
 """
-KPI Cards 2 & 3: S&P 500 / Nasdaq Technical Regime (SMA + RSI Traffic Light)
+S&P 500 / Nasdaq Technical Regime Cards
 
-Shows the index price, SMA(20/50/100), and RSI(14), plus a color-coded status pill.
-The pill color adapts to the selected strategy (Short Calls vs. Cash-Secured Puts).
+Displays index price, SMA(20/50/100), RSI(14), and strategy-adaptive regime indicator
+for Short Calls and Cash-Secured Puts strategies.
 """
 
 from dash import html
 
-_ACCENT_COLOR_MAP = {
-    "green": "accent-green",
-    "yellow": "accent-yellow",
-    "red": "accent-red",
-    "slate": "accent-slate",
-}
-
-_ICON_COLOR_MAP = {
-    "green": "icon-green",
-    "yellow": "icon-yellow",
-    "red": "icon-red",
-    "slate": "icon-slate",
-}
-
-_BADGE_COLOR_MAP = {
-    "green": "badge-green",
-    "yellow": "badge-yellow",
-    "red": "badge-red",
-    "slate": "badge-slate",
-}
-
 
 def create_index_card(index_id: str, title: str) -> html.Div:
     """
-    Create an Index Technical Regime KPI card.
+    Create Index Technical Regime KPI card with default slate styling.
 
     Args:
-        index_id: Prefix for component IDs (e.g. "sp500" or "nasdaq").
-        title: Card title (e.g. "S&P 500 Technical").
+        index_id: Prefix for component IDs (e.g. 'sp500' or 'nasdaq').
+        title: Card title (e.g. 'S&P 500 Technical').
     """
     return html.Div(
         [
@@ -118,15 +97,17 @@ def update_index_card(
     strategy_label: str,
 ) -> tuple:
     """
-    pdate an Index KPI card with latest technical values and regime styling.
+    Update Index KPI card with latest technical values and regime styling.
 
     Args:
-        technicals: Output from get_index_technicals().
-        traffic_light: Output from index_traffic_light().
-        strategy_label: Strategy text to show (e.g. "Short Calls" or "Cash-Secured Puts").
+        technicals: Dict from get_index_technicals() with price, SMA, and RSI values.
+        traffic_light: Dict from index_traffic_light() with 'color' key.
+        strategy_label: Strategy name (e.g. 'Short Calls' or 'Cash-Secured Puts').
 
     Returns:
-        Tuple of updated text values and CSS classNames in callback output order.
+        Tuple of 10 strings for updating card components:
+        (price, sma20, sma50, sma100, rsi, rsi_label, badge_text, 
+         accent_class, icon_class, badge_class)
     """
     price = technicals.get("price", 0)
     sma20 = technicals.get("sma20", 0)
@@ -136,21 +117,20 @@ def update_index_card(
     rsi_label = technicals.get("rsi_label", "N/A")
 
     color = traffic_light.get("color", "slate")
-    badge_text = f"{color.capitalize()} for {strategy_label}" if color != "slate" else "N/A"
+    if (color not in ["green", "yellow", "red", "slate"]):
+        color = "slate"
 
-    index_accent_class_name = f"kpi-accent {_ACCENT_COLOR_MAP.get(color, 'accent-slate')}"
-    index_icon_class_name = f"bi bi-graph-up-arrow kpi-icon {_ICON_COLOR_MAP.get(color, 'icon-slate')}"
-    index_badge_class_name = f"mt-2 kpi-badge {_BADGE_COLOR_MAP.get(color, 'badge-slate')}"
+    badge_text = f"{color.capitalize()} for {strategy_label}" if color != "slate" else "N/A"
 
     return (
         f"{price:,.2f}",
         f"{sma20:,.0f}",
         f"{sma50:,.0f}",
         f"{sma100:,.0f}",
-        f"{rsi:,.0f}",
-        f"{rsi_label}",
+        f"{rsi:.0f}",
+        rsi_label,
         badge_text,
-        index_accent_class_name,
-        index_icon_class_name,
-        index_badge_class_name,
+        f"kpi-accent accent-{color}",
+        f"bi bi-graph-up-arrow kpi-icon icon-{color}",
+        f"mt-2 kpi-badge badge-{color}",
     )
