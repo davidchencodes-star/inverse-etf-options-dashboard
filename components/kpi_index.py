@@ -131,6 +131,6 @@ def update_index_card(
         rsi_label,
         badge_text,
         f"kpi-accent accent-{color}",
-        f"bi bi-graph-up-arrow kpi-icon icon-{color}",
+        f"bi bi-bar-chart-line-fill kpi-icon icon-{color}",
         f"mt-2 kpi-badge badge-{color}",
     )
