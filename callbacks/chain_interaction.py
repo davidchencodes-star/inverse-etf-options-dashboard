@@ -4,21 +4,22 @@ Chain interaction callbacks.
 Handles ETF selector changes, expiration selector changes, and
 filter input changes to update the option chain table.
 
-NOTE: These interactions are handled as State inputs in the main
-data_refresh callback for simplicity. This module provides an
-additional callback for immediate response to control changes
-(without waiting for the refresh interval).
+When the strategy toggle changes, the S&P 500 and Nasdaq index cards
+are updated so their regime badge (e.g. "Red for Short Calls" vs
+"Red for Cash-Secured Puts") reflects the selected strategy.
 """
 
-from dash import Input, Output, State, callback, ctx, no_update
+import pandas as pd
+from dash import Input, Output
 
 from calculations.options_analytics import enrich_chain
+from calculations.technicals import get_index_technicals
 from calculations.traffic_lights import (
     index_traffic_light,
     option_traffic_light,
     vix_traffic_light,
 )
-from calculations.technicals import get_index_technicals
+from components.kpi_index import update_index_card
 from components.option_chain_table import prepare_chain_data
 from data.fetch import get_config, get_market_data
 
@@ -65,8 +66,6 @@ def register_chain_callbacks(app):
 
         sp_hist = historical.get(sp_symbol)
         ndx_hist = historical.get(ndx_symbol)
-
-        import pandas as pd
 
         sp_techs = get_index_technicals(sp_hist if sp_hist is not None else pd.DataFrame())
         ndx_techs = get_index_technicals(ndx_hist if ndx_hist is not None else pd.DataFrame())
@@ -122,3 +121,58 @@ def register_chain_callbacks(app):
         )
 
         return table_data, style_cond, tooltip_data, []  # Clear selection
+
+    # Update S&P 500 and Nasdaq index cards when strategy changes (badge: "Red for Short Calls" etc.)
+    @app.callback(
+        Output("sp500-value", "children", allow_duplicate=True),
+        Output("sp500-sma20-value", "children", allow_duplicate=True),
+        Output("sp500-sma50-value", "children", allow_duplicate=True),
+        Output("sp500-sma100-value", "children", allow_duplicate=True),
+        Output("sp500-rsi-value", "children", allow_duplicate=True),
+        Output("sp500-rsi-label", "children", allow_duplicate=True),
+        Output("sp500-badge", "children", allow_duplicate=True),
+        Output("sp500-accent", "className", allow_duplicate=True),
+        Output("sp500-icon", "className", allow_duplicate=True),
+        Output("sp500-badge", "className", allow_duplicate=True),
+        Output("nasdaq-value", "children", allow_duplicate=True),
+        Output("nasdaq-sma20-value", "children", allow_duplicate=True),
+        Output("nasdaq-sma50-value", "children", allow_duplicate=True),
+        Output("nasdaq-sma100-value", "children", allow_duplicate=True),
+        Output("nasdaq-rsi-value", "children", allow_duplicate=True),
+        Output("nasdaq-rsi-label", "children", allow_duplicate=True),
+        Output("nasdaq-badge", "children", allow_duplicate=True),
+        Output("nasdaq-accent", "className", allow_duplicate=True),
+        Output("nasdaq-icon", "className", allow_duplicate=True),
+        Output("nasdaq-badge", "className", allow_duplicate=True),
+        Input("strategy-toggle", "value"),
+        prevent_initial_call=True,
+    )
+    def update_index_cards_on_strategy_change(strategy):
+        """Recompute index traffic lights and badge text for the selected strategy."""
+        strategy = strategy or "short_calls"
+        strategy_label = (
+            "Short Calls" if strategy == "short_calls" else "Cash-Secured Puts"
+        )
+        config = get_config()
+        market_data = get_market_data()
+        historical = market_data.get("historical", {})
+
+        sp_symbol = config.get("index_proxies", {}).get("sp500", "SPY")
+        ndx_symbol = config.get("index_proxies", {}).get("nasdaq", "QQQ")
+        sp_hist = historical.get(sp_symbol)
+        ndx_hist = historical.get(ndx_symbol)
+
+        sp_techs = get_index_technicals(
+            sp_hist if sp_hist is not None else pd.DataFrame()
+        )
+        ndx_techs = get_index_technicals(
+            ndx_hist if ndx_hist is not None else pd.DataFrame()
+        )
+
+        sp_tl = index_traffic_light(sp_techs, strategy, config)
+        ndx_tl = index_traffic_light(ndx_techs, strategy, config)
+
+        sp_out = update_index_card(sp_techs, sp_tl, strategy_label)
+        ndx_out = update_index_card(ndx_techs, ndx_tl, strategy_label)
+
+        return (*sp_out, *ndx_out)
