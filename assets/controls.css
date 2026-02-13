@@ -1,0 +1,72 @@
+/* Make RadioItems look like a Bootstrap segmented button group */
+.segmented {
+    display: flex;
+    width: 100%;
+    gap: 0;
+}
+
+.segmented .form-check {
+    padding-left: 0;
+    /* remove default */
+    margin: 0;
+    flex: 1;
+}
+
+.segmented .btn {
+    width: 100%;
+    font-weight: 700;
+    border-color: #E5E7EB;
+    color: #111827;
+}
+
+/* first segment: round left only; second: round right only */
+.segmented .form-check:first-child .btn {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.segmented .form-check:last-child .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.segmented .btn:hover {
+    border-color: #CBD5E1;
+    background: #F8FAFC;
+    color: #111827;
+}
+
+/* checked state */
+.segmented .btn.active {
+    background: #111827;
+    border-color: #111827;
+    color: #fff;
+}
+
+/* Refresh Now: same dark as selected segment (Short Calls / DTE) */
+#refresh-button {
+    background-color: #111827 !important;
+    border-color: #111827 !important;
+    color: #fff !important;
+}
+
+
+.form-select {
+    border-radius: 12px;
+    border-color: #E5E7EB;
+}
+
+.form-select:focus {
+    box-shadow: 0 0 0 .2rem rgba(17, 24, 39, .10);
+    border-color: #CBD5E1;
+}
+
+.form-control {
+    border-radius: 12px;
+    border-color: #E5E7EB;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 .2rem rgba(17, 24, 39, .10);
+    border-color: #CBD5E1;
+}

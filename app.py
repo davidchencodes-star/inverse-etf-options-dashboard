@@ -114,12 +114,12 @@ app.layout = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(create_selected_option_card(), lg=6, className="mb-3"),
+                
+                # --- Controls Bar ---
+                dbc.Col(create_controls(config), lg=6, className="mb-3"),
             ],
             className="g-3",
         ),
-
-        # --- Controls Bar ---
-        create_controls(config),
 
         # --- Option Chain Table ---
         create_option_chain_panel(),

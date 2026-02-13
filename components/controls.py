@@ -30,57 +30,63 @@ def create_controls(config: dict) -> html.Div:
 
     return html.Div(
         [
+            html.Div(id="controls-accent", className="kpi-accent accent-slate"),
+            html.Div(
+                [
+                    html.P(
+                        [
+                            html.I(
+                                id="controls-icon",
+                                className="bi bi-sliders kpi-icon icon-slate",
+                            ),
+                            "Strategy Filters",
+                        ],
+                        className="kpi-title",
+                    ),
+                    html.Span(
+                        "Last: --",
+                        id="last-refresh-text"
+                    )
+                ],
+                className="kpi-header d-flex align-items-center justify-content-between gap-2",
+            ),
             dbc.Row(
                 [
-                    # Strategy toggle
                     dbc.Col(
                         [
-                            html.Label(
-                                "Strategy",
-                                className="fw-bold small mb-1",
-                            ),
+                            html.Div("Strategy", className="small text-muted fw-semibold mb-1"),
                             dbc.RadioItems(
                                 id="strategy-toggle",
                                 options=[
-                                    {"label": "Short Calls", "value": "short_calls"},
-                                    {
-                                        "label": "Cash-Secured Puts",
-                                        "value": "cash_secured_puts",
-                                    },
+                                    {"label": html.Span([html.I(className="bi bi-arrow-down-right me-2"), "Short Calls"]),
+                                    "value": "short_calls"},
+                                    {"label": html.Span([html.I(className="bi bi-shield-check me-2"), "Cash-Secured Puts"]),
+                                    "value": "cash_secured_puts"},
                                 ],
-                                value="short_calls",
+                                value="short_calls",   # set default
                                 inline=True,
-                                className="mb-0",
-                                inputClassName="me-1",
-                                labelClassName="me-3 small",
+                                className="segmented w-100",
+                                inputClassName="btn-check",
+                                labelClassName="btn btn-outline-secondary flex-fill text-center",
+                                labelCheckedClassName="active",
                             ),
                         ],
-                        md=3,
-                        className="mb-2",
+                        xs=12,
                     ),
-                    # ETF selector
                     dbc.Col(
                         [
-                            html.Label("ETF", className="fw-bold small mb-1"),
+                            html.Div("ETF", className="small text-muted fw-semibold mb-1"),
                             dbc.Select(
                                 id="etf-selector",
-                                options=[
-                                    {"label": etf, "value": etf} for etf in etfs
-                                ],
+                                options=[{"label": etf, "value": etf} for etf in etfs],
                                 value=etfs[0] if etfs else "SPXS",
-                                size="sm",
                             ),
                         ],
-                        md=2,
-                        className="mb-2",
+                        xs=12, md=6,
                     ),
-                    # Expiration selector
                     dbc.Col(
                         [
-                            html.Label(
-                                "Expiration",
-                                className="fw-bold small mb-1",
-                            ),
+                            html.Div("Expiration", className="small text-muted fw-semibold mb-1"),
                             dbc.RadioItems(
                                 id="expiration-selector",
                                 options=[
@@ -89,92 +95,81 @@ def create_controls(config: dict) -> html.Div:
                                 ],
                                 value=7,
                                 inline=True,
-                                className="mb-0",
-                                inputClassName="me-1",
-                                labelClassName="me-3 small",
+                                className="segmented w-100",
+                                inputClassName="btn-check",
+                                labelClassName="btn btn-outline-secondary flex-fill text-center",
+                                labelCheckedClassName="active",
                             ),
                         ],
-                        md=2,
-                        className="mb-2",
-                    ),
-                    # Filters
-                    dbc.Col(
-                        [
-                            html.Label(
-                                "Min Ann. Return %",
-                                className="fw-bold small mb-1",
-                            ),
-                            dbc.Input(
-                                id="filter-min-return",
-                                type="number",
-                                value=return_target,
-                                min=0,
-                                max=200,
-                                step=5,
-                                size="sm",
-                            ),
-                        ],
-                        md=1,
-                        className="mb-2",
+                        xs=12, md=6,
                     ),
                     dbc.Col(
                         [
-                            html.Label(
-                                "Min OI",
-                                className="fw-bold small mb-1",
-                            ),
-                            dbc.Input(
-                                id="filter-min-oi",
-                                type="number",
-                                value=min_oi,
-                                min=0,
-                                step=50,
-                                size="sm",
+                            html.Div("Thresholds", className="small text-muted fw-semibold mb-1"),
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        [
+                                            html.Label("Min Ann. Return %", className="form-label text-muted small mb-1"),
+                                            dbc.Input(
+                                                id="filter-min-return",
+                                                type="number",
+                                                value=return_target,
+                                                min=0,
+                                                max=200,
+                                                step=5,
+                                            ),
+                                        ],
+                                        xs=12, md=4,
+                                    ),
+                                    dbc.Col(
+                                        [
+                                            html.Label("Min OI", className="form-label text-muted small mb-1"),
+                                            dbc.Input(
+                                                id="filter-min-oi",
+                                                type="number",
+                                                value=min_oi,
+                                                min=0,
+                                                step=50,
+                                            ),
+                                        ],
+                                        xs=12, md=4,
+                                    ),
+                                    dbc.Col(
+                                        [
+                                            html.Label("Min Vol", className="form-label text-muted small mb-1"),
+                                            dbc.Input(
+                                                id="filter-min-volume",
+                                                type="number",
+                                                value=min_vol,
+                                                min=0,
+                                                step=5,
+                                            ),
+                                        ],
+                                        xs=12, md=4,
+                                    ),
+                                ],
+                                className="g-2",
                             ),
                         ],
-                        md=1,
-                        className="mb-2",
+                        xs=12,
+                        className="d-none",
                     ),
                     dbc.Col(
                         [
-                            html.Label(
-                                "Min Vol",
-                                className="fw-bold small mb-1",
-                            ),
-                            dbc.Input(
-                                id="filter-min-volume",
-                                type="number",
-                                value=min_vol,
-                                min=0,
-                                step=5,
-                                size="sm",
-                            ),
-                        ],
-                        md=1,
-                        className="mb-2",
-                    ),
-                    # Refresh controls
-                    dbc.Col(
-                        [
-                            html.Label("\u00A0", className="fw-bold small mb-1 d-block"),
                             dbc.Button(
-                                [html.I(className="me-1"), "Refresh Now"],
+                                [
+                                    html.I(className="bi bi-arrow-repeat me-2"),
+                                    "Refresh Now",
+                                ],
                                 id="refresh-button",
-                                color="primary",
-                                size="sm",
-                                className="w-100",
-                            ),
-                            html.Small(
-                                "Last: --",
-                                id="last-refresh-text",
-                                className="text-muted d-block mt-1",
-                            ),
+                                className="btn-dark w-100 py-2 rounded",
+                            )
                         ],
-                        md=2,
-                        className="mb-2",
-                    ),
+                        xs=12,
+                    )
                 ],
-                className="align-items-end",
+                className="kpi-body g-3",
             ),
             # Auto-refresh interval
             dcc.Interval(
@@ -185,5 +180,6 @@ def create_controls(config: dict) -> html.Div:
             # Hidden store for stale warning state
             dcc.Store(id="stale-warning-store", data=False),
         ],
-        className="bg-light p-3 rounded shadow-sm",
+        id="kpi-card-controls",
+        className="kpi-card",
     )

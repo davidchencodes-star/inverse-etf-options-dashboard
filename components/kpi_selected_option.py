@@ -88,7 +88,7 @@ def update_selected_option_card(
 
     # Folded "Ann. return:" label + colored percentage (no "(Green)" text)
     value_children = [
-        html.Span("Ann. return: ", className="mr-2"),
+        html.Span("Ann. return: ", className="me-2"),
         html.Span(
             f"{ann_return:.1f}%",
             className=f"etf-text-{color}",
